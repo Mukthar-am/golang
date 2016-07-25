@@ -1,4 +1,4 @@
-package main
+package maloadtouch
 
 import (
 	//"encoding/json"
@@ -22,8 +22,6 @@ func main() {
 	//eventsCounter(url)
 	//postByClient()
 	//hitByGoReq()
-	eventsTracking("http://localhost:8080/springwebeg/track/events")
-
 
 	//urlByGoRequestApiTesting()
 	//urlByGoRequestApiTracking()        /** url post request by gorequest()  */

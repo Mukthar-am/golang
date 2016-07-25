@@ -1,10 +1,7 @@
-package main
+package MATouchload
 
 import (
-	//"encoding/json"
-	//"github.com/jmcvetta/napping"
 	"fmt"
-	//"log"
 	"net/http"
 	"bytes"
 	"io/ioutil"
@@ -14,15 +11,11 @@ import (
 	"time"
 )
 
-func main() {
-	maTrackUrl := "http://localhost:8080/springwebeg/track/events"
-	//url := "http://localhost:8080/springwebeg/track/info"
-	//eventsTracking("http://localhost:8080/springwebeg/track/events")
-	usingGoRequest(maTrackUrl)
-
+func Helper()  {
+	fmt.Println("# Helper funciton being called.")
 }
 
-func eventsCounter(URL string) {
+func EventsCounter(URL string) (string) {
 	resp, err := http.Get(URL)
 	if err != nil {
 		fmt.Println(err)
@@ -39,10 +32,12 @@ func eventsCounter(URL string) {
 	}
 
 	// print out
-	fmt.Println("EventsCount:=", string(htmlData))
+	//fmt.Println("EventsCount:=", string(htmlData))
+	return string(htmlData)
 }
 
-func usingGoRequest(maTrackUrl string)  {
+
+func SendEvents(maTrackUrl string)  {
 	m := map[string]interface{}{
 		"name": "backy",
 		"age": "33",
@@ -65,9 +60,10 @@ func usingGoRequest(maTrackUrl string)  {
 	fmt.Println("# Response := ", resp.Status, "\n# Body := ", body)
 }
 
-func eventsTracking(URL string) {
+
+func SendEventsByPost(URL string) {
 	m := map[string]interface{}{
-		"name": "backy",
+		"name": "Muks",
 		"age": "33",
 		"city": "Bangalore",
 	}
