@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"time"
-	"helloworld/maloadtouch"
+	"matouchload/eventsloader"
 	//"github.com/aerospike/aerospike-client-go/types/atomic"
 	//"helloworld/masync"
 	"fmt"
@@ -21,7 +21,7 @@ func main() {
 	//MATouchLoad.PrintCounter()
 	//type cntr masyncatomic.AtomicInt
 	//fmt.Println(matouchevents.GetCounter())
-	fmt.Println(matouchevents.GetMyCounter())
+	fmt.Println(matouchevents.GetEventsCount())
 
 }
 

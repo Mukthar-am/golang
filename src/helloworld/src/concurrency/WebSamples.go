@@ -1,4 +1,4 @@
-package maloadtouch
+package main
 
 import (
 	//"encoding/json"

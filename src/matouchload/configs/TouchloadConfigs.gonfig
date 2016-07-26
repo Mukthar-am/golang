@@ -1,0 +1,20 @@
+{
+	"url": {
+		"test" : "http://localhost:8080/springwebeg/track/track",
+		"prod": 443,
+		"message": {
+			"template": {
+				"subject": "this is my default subject",
+				"message": "whoops, looks like I forgot to write a body!"
+			}
+		}
+	},
+	"payload": {
+		"test": {
+			"name": "Jane32",
+			"age": "32",
+			"city": "Bengaluru"
+		}
+	}
+
+}
