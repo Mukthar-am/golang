@@ -13,33 +13,39 @@ import (
 )
 
 type file gonfig.Gonfig
+
 var maTrackingUrl string
-var runs int
+
+/* CLI args */
+var concUsers int
 var logFile string
 var configFile string
+
+var testmode bool // to run in test mode
 
 
 func init() {
 	logPathDefault, _ := filepath.Abs("touchload.log")
 	configDefault, _ := filepath.Abs("../../configs/TouchloadConfigs.gonfig")
 
-	flag.IntVar(&runs, "runs", 1, "help message for flagname")
+	flag.IntVar(&concUsers, "runs", 1, "help message for flagname")
 	flag.StringVar(&logFile, "log", logPathDefault, "log file path")
 	flag.StringVar(&configFile, "config", configDefault, "config file path")
+	flag.BoolVar(&testmode, "testmode", true, "run in test mode")
+
 	flag.Parse()
 }
 
+/**
+	golang - MaTouchload launcher script
+ */
 func main() {
-
-
 	fmt.Print("\n")
 	log.Print(":= (START TIME) =:")
 	fmt.Println(":= Load Start :=",
-	"\nUsers/parallel runs -> ", runs,
-	"\nLog file: ", logFile,
-	"\nConfig file: ", configFile)
-
-	os.Exit(0)
+		"\nUsers/parallel runs -> ", concUsers,
+		"\nLog file: ", logFile,
+		"\nConfig file: ", configFile)
 
 	file := configs.GetFileHandler(configFile)
 	url, _ := file.Get("url/test", "empty-json")
@@ -50,44 +56,35 @@ func main() {
 	// concurrently hitting the url
 	go sendLoad(maTrackingUrl, load)
 
-	var input string
-	fmt.Scanln(&input)
-	fmt.Println("Terminate request received: ", input)
+	select {}
+	//var input string
+	//fmt.Scanln(&input)
+	//fmt.Println("Terminate request received: ", input)
 }
 
-
-
 func sendLoad(maTrackingUrl string, payload interface{}) {
-
 	// open a file
-	f, err := os.OpenFile("/Users/15692/Downloads/test.log", os.O_APPEND | os.O_CREATE | os.O_RDWR, 0666)
+	logFH, err := os.OpenFile(logFile, os.O_APPEND | os.O_CREATE | os.O_RDWR, 0666)
 	if err != nil {
 		fmt.Printf("error opening file: %v", err)
 	}
-	// don't forget to close it
-	defer f.Close()
-
-	// assign it to the standard logger
-	log.SetOutput(f)
-
-
-	var testmode bool = true
-	var Counters5xx int = 0
-
+	defer logFH.Close()
+	log.SetOutput(logFH)        // assign it to the standard logger
 
 	fmt.Println("===========================================================")
 	fmt.Println("# Runtime stats:= ")
-
-	go touchloader.ResetPoster(maTrackingUrl, testmode, payload)
-
-	for {
-		time.Sleep(time.Second * 2)
-		fmt.Printf("\r(2xx/5xx) := %d/%d", touchloader.GetEventsCount(), Counters5xx)
-		log.Println("mukthar")
-		//f.WriteString("blah asfsjk")
-
+	for i := 1; i <= concUsers; i++ {
+		go touchloader.ResetPoster(maTrackingUrl, testmode, payload)
 	}
 
+	type Counters2xx int
+	type Counters5xx int
+	for {
+		Counters2xx := touchloader.GetCount2xx()
+		Counters5xx := 0
 
-
+		time.Sleep(time.Second * 2)
+		fmt.Printf("\r(2xx/5xx) := %d/%d", Counters2xx, Counters5xx)
+		log.Println(Counters2xx)
+	}
 }

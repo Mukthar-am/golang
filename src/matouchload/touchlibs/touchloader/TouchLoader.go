@@ -11,16 +11,20 @@ import (
 	"sync/atomic"
 )
 
-var Counter uint64 = 0
+var Counter2xx uint64 = 0
+var CounterNon2xx uint64 = 0
 
 
 /* ===========================================================================================
 	Get the total number of concurrent events count
 	*/
-func GetEventsCount() (uint64) {
-	return atomic.LoadUint64(&Counter)
+func GetCount2xx() (uint64) {
+	return atomic.LoadUint64(&Counter2xx)
 }
 
+func GetCount5xx() (uint64) {
+	return atomic.LoadUint64(&CounterNon2xx)
+}
 /* ===========================================================================================
 	# Totally for testing purpose
 	- Reset event counts and
@@ -36,10 +40,8 @@ func ResetPoster(maTrackingUrl string, testmode bool, payload interface{}) {
 		_ = execGetUri(url)
 	}
 
-
 	for {
-		time.Sleep(time.Second * 1)
-		atomic.AddUint64( &Counter, 1 )
+		time.Sleep(time.Second * 1)	// comment this in realtime
 		Poster(maTrackingUrl, payload)
 	}
 }
@@ -47,29 +49,30 @@ func ResetPoster(maTrackingUrl string, testmode bool, payload interface{}) {
 func PostOnly(postUrl string, payload string) {
 	for {
 		//time.Sleep(time.Second * 1)
-		atomic.AddUint64( &Counter, 1 )
+		atomic.AddUint64( &Counter2xx, 1 )
 		Poster(postUrl, payload)
 	}
 }
 
 func Poster(maTrackUrl string, payload interface{})  {
-	//payload := map[string]interface{}{
-	//	"name": "backy",
-	//	"age": "33",
-	//	"city": "Bangalore",
-	//	"description": "GoLang here!",
-	//}
 	mJson, _ := json.Marshal(payload)
 	s := string(mJson)
 
 	request := gorequest.New().Timeout(1000 * time.Millisecond)
-	_, _, errs := request.Post(maTrackUrl).
+	resp, _, errs := request.Post(maTrackUrl).
 	Set("Content-Type", "application/json").
 	Send(s).
 	End()
 
 	if errs != nil {
 		fmt.Println(errs)
+	}
+
+	statusCode := resp.StatusCode
+	if (statusCode == 200) {
+		atomic.AddUint64( &Counter2xx, 1 )
+	} else {
+		atomic.AddUint64( &CounterNon2xx, 1 )
 	}
 }
 
