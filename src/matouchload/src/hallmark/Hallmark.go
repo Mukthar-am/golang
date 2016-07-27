@@ -51,7 +51,7 @@ func main() {
 	url, _ := file.Get("url/test", "empty-json")
 	maTrackingUrl = url.(string)
 
-	load, _ := file.Get("payload/test", "empty-json")
+	load, _ := file.Get("payload-track", "empty-json")
 
 	// concurrently hitting the url
 	go sendLoad(maTrackingUrl, load)
