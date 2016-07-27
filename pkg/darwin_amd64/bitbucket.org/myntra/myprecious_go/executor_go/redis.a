@@ -1,0 +1,581 @@
+!<arch>
+__.PKGDEF       0           0     0     644     97388     `
+go object darwin amd64 go1.6.2 X:none
+build id "113c0f2f27c5c81bc39a335b5f4db4ad6a3f3327"
+
+$$
+package redis
+	import redis "gopkg.in/redis.v3"
+	import time "time"
+	import glog "github.com/golang/glog"
+	import pool "gopkg.in/redis.v3/internal/pool" // indirect
+	import net "net" // indirect
+	type @"net".Addr interface { Network() (? string); String() (? string) }
+	type @"time".zone struct { @"time".name string; @"time".offset int; @"time".isDST bool }
+	type @"time".zoneTrans struct { @"time".when int64; @"time".index uint8; @"time".isstd bool; @"time".isutc bool }
+	type @"time".Location struct { @"time".name string; @"time".zone []@"time".zone; @"time".tx []@"time".zoneTrans; @"time".cacheStart int64; @"time".cacheEnd int64; @"time".cacheZone *@"time".zone }
+	func (@"time".l·2 *@"time".Location "esc:0x22") String () (? string)
+	func (@"time".l·2 *@"time".Location "esc:0x1") @"time".firstZoneUsed () (? bool)
+	func (@"time".l·2 *@"time".Location "esc:0x12") @"time".get () (? *@"time".Location)
+	func (@"time".l·6 *@"time".Location "esc:0x32") @"time".lookup (@"time".sec·7 int64) (@"time".name·1 string, @"time".offset·2 int, @"time".isDST·3 bool, @"time".start·4 int64, @"time".end·5 int64)
+	func (@"time".l·2 *@"time".Location "esc:0x1") @"time".lookupFirstZone () (? int)
+	func (@"time".l·4 *@"time".Location "esc:0x1") @"time".lookupName (@"time".name·5 string "esc:0x1", @"time".unix·6 int64) (@"time".offset·1 int, @"time".isDST·2 bool, @"time".ok·3 bool)
+	type @"time".Duration int64
+	func (@"time".d·2 @"time".Duration) Hours () (? float64) { var @"time".hour·3 @"time".Duration; ; @"time".hour·3 = @"time".d·2 / @"time".Duration(0x34630b8a000); var @"time".nsec·4 @"time".Duration; ; @"time".nsec·4 = @"time".d·2 % @"time".Duration(0x34630b8a000); return float64(@"time".hour·3) + float64(@"time".nsec·4) * float64(8190022623310637111963488201822504381538623676021880892417778544696899264837610290203272971060556344039023584360473938041055625214280336402169897364226048p-553) }
+	func (@"time".d·2 @"time".Duration) Minutes () (? float64) { var @"time".min·3 @"time".Duration; ; @"time".min·3 = @"time".d·2 / @"time".Duration(0xdf8475800); var @"time".nsec·4 @"time".Duration; ; @"time".nsec·4 = @"time".d·2 % @"time".Duration(0xdf8475800); return float64(@"time".min·3) + float64(@"time".nsec·4) * float64(7678146209353722106395056769533233877065564876941352542109479049699919628723768656821910653339403201031675627614471533358284117434246264392176261853609984p-547) }
+	func (@"time".d·2 @"time".Duration) Nanoseconds () (? int64) { return int64(@"time".d·2) }
+	func (@"time".d·2 @"time".Duration) Seconds () (? float64) { var @"time".sec·3 @"time".Duration; ; @"time".sec·3 = @"time".d·2 / @"time".Duration(0x3b9aca00); var @"time".nsec·4 @"time".Duration; ; @"time".nsec·4 = @"time".d·2 % @"time".Duration(0x3b9aca00); return float64(@"time".sec·3) + float64(@"time".nsec·4) * float64(7198262071269114660816079141112770740375861891461678802759824945047098083990024106014198994535558872472104883612039846078596891298747423852523262413111296p-541) }
+	func (@"time".d·2 @"time".Duration) String () (? string)
+	type @"time".Month int
+	func (@"time".m·2 @"time".Month) String () (? string) { return @"time".months[@"time".m·2 - @"time".Month(0x1)] }
+	type @"time".Weekday int
+	func (@"time".d·2 @"time".Weekday) String () (? string) { return @"time".days[@"time".d·2] }
+	type @"time".Time struct { @"time".sec int64; @"time".nsec int32; @"time".loc *@"time".Location }
+	func (@"time".t·2 @"time".Time "esc:0x12") Add (@"time".d·3 @"time".Duration) (? @"time".Time) { @"time".t·2.@"time".sec += int64(@"time".d·3 / @"time".Duration(0x3b9aca00)); var @"time".nsec·4 int32; ; @"time".nsec·4 = int32(@"time".t·2.@"time".nsec) + int32(@"time".d·3 % @"time".Duration(0x3b9aca00)); if @"time".nsec·4 >= int32(0x3b9aca00) { @"time".t·2.@"time".sec++; @"time".nsec·4 -= int32(0x3b9aca00) } else { if @"time".nsec·4 < int32(0x0) { @"time".t·2.@"time".sec--; @"time".nsec·4 += int32(0x3b9aca00) } }; @"time".t·2.@"time".nsec = @"time".nsec·4; return @"time".t·2 }
+	func (@"time".t·2 @"time".Time "esc:0x12") AddDate (@"time".years·3 int, @"time".months·4 int, @"time".days·5 int) (? @"time".Time)
+	func (@"time".t·2 @"time".Time "esc:0x1") After (@"time".u·3 @"time".Time "esc:0x1") (? bool) { return @"time".t·2.@"time".sec > @"time".u·3.@"time".sec || @"time".t·2.@"time".sec == @"time".u·3.@"time".sec && @"time".t·2.@"time".nsec > @"time".u·3.@"time".nsec }
+	func (@"time".t·2 @"time".Time "esc:0x9") AppendFormat (@"time".b·3 []byte "esc:0x1a", @"time".layout·4 string "esc:0x9") (? []byte)
+	func (@"time".t·2 @"time".Time "esc:0x1") Before (@"time".u·3 @"time".Time "esc:0x1") (? bool) { return @"time".t·2.@"time".sec < @"time".u·3.@"time".sec || @"time".t·2.@"time".sec == @"time".u·3.@"time".sec && @"time".t·2.@"time".nsec < @"time".u·3.@"time".nsec }
+	func (@"time".t·4 @"time".Time "esc:0x1") Clock () (@"time".hour·1 int, @"time".min·2 int, @"time".sec·3 int)
+	func (@"time".t·4 @"time".Time "esc:0x1") Date () (@"time".year·1 int, @"time".month·2 @"time".Month, @"time".day·3 int)
+	func (@"time".t·2 @"time".Time "esc:0x1") Day () (? int)
+	func (@"time".t·2 @"time".Time "esc:0x1") Equal (@"time".u·3 @"time".Time "esc:0x1") (? bool) { return @"time".t·2.@"time".sec == @"time".u·3.@"time".sec && @"time".t·2.@"time".nsec == @"time".u·3.@"time".nsec }
+	func (@"time".t·2 @"time".Time "esc:0x9") Format (@"time".layout·3 string "esc:0x9") (? string)
+	func (@"time".t·2 *@"time".Time "esc:0x1") GobDecode (@"time".data·3 []byte "esc:0x1") (? error)
+	func (@"time".t·3 @"time".Time "esc:0x1") GobEncode () (? []byte, ? error)
+	func (@"time".t·2 @"time".Time "esc:0x1") Hour () (? int)
+	func (@"time".t·3 @"time".Time "esc:0x1") ISOWeek () (@"time".year·1 int, @"time".week·2 int)
+	func (@"time".t·2 @"time".Time "esc:0x12") In (@"time".loc·3 *@"time".Location "esc:0x12") (? @"time".Time)
+	func (@"time".t·2 @"time".Time "esc:0x1") IsZero () (? bool) { return @"time".t·2.@"time".sec == int64(0x0) && @"time".t·2.@"time".nsec == int32(0x0) }
+	func (@"time".t·2 @"time".Time "esc:0x12") Local () (? @"time".Time) { @"time".t·2.@"time".loc = @"time".Local; return @"time".t·2 }
+	func (@"time".t·2 @"time".Time "esc:0x12") Location () (? *@"time".Location) { var @"time".l·3 *@"time".Location; ; @"time".l·3 = @"time".t·2.@"time".loc; if @"time".l·3 == nil { @"time".l·3 = @"time".UTC }; return @"time".l·3 }
+	func (@"time".t·3 @"time".Time "esc:0x1") MarshalBinary () (? []byte, ? error)
+	func (@"time".t·3 @"time".Time "esc:0x9") MarshalJSON () (? []byte, ? error)
+	func (@"time".t·3 @"time".Time "esc:0x9") MarshalText () (? []byte, ? error)
+	func (@"time".t·2 @"time".Time "esc:0x1") Minute () (? int)
+	func (@"time".t·2 @"time".Time "esc:0x1") Month () (? @"time".Month)
+	func (@"time".t·2 @"time".Time "esc:0x1") Nanosecond () (? int) { return int(@"time".t·2.@"time".nsec) }
+	func (@"time".t·2 @"time".Time "esc:0x12") Round (@"time".d·3 @"time".Duration) (? @"time".Time)
+	func (@"time".t·2 @"time".Time "esc:0x1") Second () (? int)
+	func (@"time".t·2 @"time".Time "esc:0x9") String () (? string)
+	func (@"time".t·2 @"time".Time "esc:0x1") Sub (@"time".u·3 @"time".Time "esc:0x1") (? @"time".Duration)
+	func (@"time".t·2 @"time".Time "esc:0x12") Truncate (@"time".d·3 @"time".Duration) (? @"time".Time)
+	func (@"time".t·2 @"time".Time "esc:0x12") UTC () (? @"time".Time) { @"time".t·2.@"time".loc = @"time".UTC; return @"time".t·2 }
+	func (@"time".t·2 @"time".Time "esc:0x1") Unix () (? int64) { return @"time".t·2.@"time".sec + int64(-0xe7791f700) }
+	func (@"time".t·2 @"time".Time "esc:0x1") UnixNano () (? int64) { return (@"time".t·2.@"time".sec + int64(-0xe7791f700)) * int64(0x3b9aca00) + int64(@"time".t·2.@"time".nsec) }
+	func (@"time".t·2 *@"time".Time "esc:0x1") UnmarshalBinary (@"time".data·3 []byte "esc:0x1") (? error)
+	func (@"time".t·2 *@"time".Time "esc:0x1") UnmarshalJSON (@"time".data·3 []byte "esc:0x1") (@"time".err·1 error)
+	func (@"time".t·2 *@"time".Time "esc:0x1") UnmarshalText (@"time".data·3 []byte "esc:0x1") (@"time".err·1 error)
+	func (@"time".t·2 @"time".Time "esc:0x1") Weekday () (? @"time".Weekday)
+	func (@"time".t·2 @"time".Time "esc:0x1") Year () (? int)
+	func (@"time".t·2 @"time".Time "esc:0x1") YearDay () (? int)
+	func (@"time".t·3 @"time".Time "esc:0x32") Zone () (@"time".name·1 string, @"time".offset·2 int)
+	func (@"time".t·2 @"time".Time "esc:0x1") @"time".abs () (? uint64)
+	func (@"time".t·5 @"time".Time "esc:0x1") @"time".date (@"time".full·6 bool) (@"time".year·1 int, @"time".month·2 @"time".Month, @"time".day·3 int, @"time".yday·4 int)
+	func (@"time".t·4 @"time".Time "esc:0x32") @"time".locabs () (@"time".name·1 string, @"time".offset·2 int, @"time".abs·3 uint64)
+	type @"net".Conn interface { Close() (? error); LocalAddr() (? @"net".Addr); Read(@"net".b []byte) (@"net".n int, @"net".err error); RemoteAddr() (? @"net".Addr); SetDeadline(@"net".t @"time".Time) (? error); SetReadDeadline(@"net".t @"time".Time) (? error); SetWriteDeadline(@"net".t @"time".Time) (? error); Write(@"net".b []byte) (@"net".n int, @"net".err error) }
+	import bufio "bufio" // indirect
+	import io "io" // indirect
+	type @"io".Reader interface { Read(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"io".Writer interface { Write(@"io".p []byte) (@"io".n int, @"io".err error) }
+	type @"bufio".Reader struct { @"bufio".buf []byte; @"bufio".rd @"io".Reader; @"bufio".r int; @"bufio".w int; @"bufio".err error; @"bufio".lastByte int; @"bufio".lastRuneSize int }
+	func (@"bufio".b·2 *@"bufio".Reader "esc:0x1") Buffered () (? int) { return @"bufio".b·2.@"bufio".w - @"bufio".b·2.@"bufio".r }
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x10a") Discard (@"bufio".n·4 int) (@"bufio".discarded·1 int, @"bufio".err·2 error)
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x12a") Peek (@"bufio".n·4 int) (? []byte, ? error)
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x10a") Read (@"bufio".p·4 []byte) (@"bufio".n·1 int, @"bufio".err·2 error)
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x10a") ReadByte () (@"bufio".c·1 byte, @"bufio".err·2 error)
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x10a") ReadBytes (@"bufio".delim·4 byte) (@"bufio".line·1 []byte, @"bufio".err·2 error)
+	func (@"bufio".b·4 *@"bufio".Reader "esc:0x82a") ReadLine () (@"bufio".line·1 []byte, @"bufio".isPrefix·2 bool, @"bufio".err·3 error)
+	func (@"bufio".b·4 *@"bufio".Reader "esc:0x80a") ReadRune () (@"bufio".r·1 rune, @"bufio".size·2 int, @"bufio".err·3 error)
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x12a") ReadSlice (@"bufio".delim·4 byte) (@"bufio".line·1 []byte, @"bufio".err·2 error)
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x10a") ReadString (@"bufio".delim·4 byte) (@"bufio".line·1 string, @"bufio".err·2 error)
+	func (@"bufio".b·1 *@"bufio".Reader "esc:0x9") Reset (@"bufio".r·2 @"io".Reader) { @"bufio".b·1.@"bufio".reset(@"bufio".b·1.@"bufio".buf, @"bufio".r·2) }
+	func (@"bufio".b·2 *@"bufio".Reader "esc:0x1") UnreadByte () (? error) { if @"bufio".b·2.@"bufio".lastByte < int(0x0) || @"bufio".b·2.@"bufio".r == int(0x0) && @"bufio".b·2.@"bufio".w > int(0x0) { return @"bufio".ErrInvalidUnreadByte }; if @"bufio".b·2.@"bufio".r > int(0x0) { @"bufio".b·2.@"bufio".r-- } else { @"bufio".b·2.@"bufio".w = int(0x1) }; @"bufio".b·2.@"bufio".buf[@"bufio".b·2.@"bufio".r] = byte(@"bufio".b·2.@"bufio".lastByte); @"bufio".b·2.@"bufio".lastByte = int(-0x1); @"bufio".b·2.@"bufio".lastRuneSize = int(-0x1); return nil }
+	func (@"bufio".b·2 *@"bufio".Reader "esc:0x1") UnreadRune () (? error) { if @"bufio".b·2.@"bufio".lastRuneSize < int(0x0) || @"bufio".b·2.@"bufio".r < @"bufio".b·2.@"bufio".lastRuneSize { return @"bufio".ErrInvalidUnreadRune }; @"bufio".b·2.@"bufio".r -= @"bufio".b·2.@"bufio".lastRuneSize; @"bufio".b·2.@"bufio".lastByte = int(-0x1); @"bufio".b·2.@"bufio".lastRuneSize = int(-0x1); return nil }
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x10a") WriteTo (@"bufio".w·4 @"io".Writer) (@"bufio".n·1 int64, @"bufio".err·2 error)
+	func (@"bufio".b·1 *@"bufio".Reader "esc:0x9") @"bufio".fill ()
+	func (@"bufio".b·2 *@"bufio".Reader "esc:0x22") @"bufio".readErr () (? error) { var @"bufio".err·3 error; ; @"bufio".err·3 = @"bufio".b·2.@"bufio".err; @"bufio".b·2.@"bufio".err = nil; return @"bufio".err·3 }
+	func (@"bufio".b·1 *@"bufio".Reader "esc:0x1") @"bufio".reset (@"bufio".buf·2 []byte, @"bufio".r·3 @"io".Reader) { *@"bufio".b·1 = (@"bufio".Reader{ @"bufio".buf:@"bufio".buf·2, @"bufio".rd:@"bufio".r·3, @"bufio".lastByte:int(-0x1), @"bufio".lastRuneSize:int(-0x1) }) }
+	func (@"bufio".b·3 *@"bufio".Reader "esc:0x9") @"bufio".writeBuf (@"bufio".w·4 @"io".Writer) (? int64, ? error)
+	type @"gopkg.in/redis.v3/internal/pool".Conn struct { NetConn @"net".Conn; Rd *@"bufio".Reader; Buf []byte; Inited bool; UsedAt @"time".Time; ReadTimeout @"time".Duration; WriteTimeout @"time".Duration }
+	func (@"gopkg.in/redis.v3/internal/pool".cn·2 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") Close () (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".cn·2 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x1") IsStale (@"gopkg.in/redis.v3/internal/pool".timeout·3 @"time".Duration) (? bool)
+	func (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") Read (@"gopkg.in/redis.v3/internal/pool".b·4 []byte) (? int, ? error)
+	func (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x2a") ReadN (@"gopkg.in/redis.v3/internal/pool".n·4 int) (? []byte, ? error)
+	func (@"gopkg.in/redis.v3/internal/pool".cn·2 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") RemoteAddr () (? @"net".Addr)
+	func (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") Write (@"gopkg.in/redis.v3/internal/pool".b·4 []byte) (? int, ? error)
+	type @"gopkg.in/redis.v3/internal/pool".PoolStats struct { Requests uint32; Hits uint32; Waits uint32; Timeouts uint32; TotalConns uint32; FreeConns uint32 }
+	type @"gopkg.in/redis.v3/internal/pool".Pooler interface { Close() (? error); Closed() (? bool); FreeLen() (? int); Get() (? *@"gopkg.in/redis.v3/internal/pool".Conn, ? error); Len() (? int); Put(? *@"gopkg.in/redis.v3/internal/pool".Conn) (? error); Remove(? *@"gopkg.in/redis.v3/internal/pool".Conn, ? error) (? error); Stats() (? *@"gopkg.in/redis.v3/internal/pool".PoolStats) }
+	type @"gopkg.in/redis.v3".Options struct { Network string; Addr string; Dialer func() (? @"net".Conn, ? error); Password string; DB int64; MaxRetries int; DialTimeout @"time".Duration; ReadTimeout @"time".Duration; WriteTimeout @"time".Duration; PoolSize int; PoolTimeout @"time".Duration; IdleTimeout @"time".Duration; IdleCheckFrequency @"time".Duration }
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options "esc:0x1") @"gopkg.in/redis.v3".getDialTimeout () (? @"time".Duration) { if @"gopkg.in/redis.v3".opt·2.DialTimeout == @"time".Duration(0x0) { return @"time".Duration(0x12a05f200) }; return @"gopkg.in/redis.v3".opt·2.DialTimeout }
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options) @"gopkg.in/redis.v3".getDialer () (? func() (? @"net".Conn, ? error))
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options "esc:0x1") @"gopkg.in/redis.v3".getIdleCheckFrequency () (? @"time".Duration) { if @"gopkg.in/redis.v3".opt·2.IdleCheckFrequency == @"time".Duration(0x0) { return @"time".Duration(0xdf8475800) }; return @"gopkg.in/redis.v3".opt·2.IdleCheckFrequency }
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options "esc:0x1") @"gopkg.in/redis.v3".getIdleTimeout () (? @"time".Duration) { return @"gopkg.in/redis.v3".opt·2.IdleTimeout }
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options "esc:0x22") @"gopkg.in/redis.v3".getNetwork () (? string) { if @"gopkg.in/redis.v3".opt·2.Network == string("") { return string("tcp") }; return @"gopkg.in/redis.v3".opt·2.Network }
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options "esc:0x1") @"gopkg.in/redis.v3".getPoolSize () (? int) { if @"gopkg.in/redis.v3".opt·2.PoolSize == int(0x0) { return int(0xa) }; return @"gopkg.in/redis.v3".opt·2.PoolSize }
+	func (@"gopkg.in/redis.v3".opt·2 *@"gopkg.in/redis.v3".Options "esc:0x1") @"gopkg.in/redis.v3".getPoolTimeout () (? @"time".Duration) { if @"gopkg.in/redis.v3".opt·2.PoolTimeout == @"time".Duration(0x0) { return @"time".Duration(0x3b9aca00) }; return @"gopkg.in/redis.v3".opt·2.PoolTimeout }
+	type @"gopkg.in/redis.v3".Cmder interface { Err() (? error); String() (? string); @"gopkg.in/redis.v3".args() (? []interface {}); @"gopkg.in/redis.v3".clusterKey() (? string); @"gopkg.in/redis.v3".readReply(? *@"gopkg.in/redis.v3/internal/pool".Conn) (? error); @"gopkg.in/redis.v3".readTimeout() (? *@"time".Duration); @"gopkg.in/redis.v3".reset(); @"gopkg.in/redis.v3".setErr(? error) }
+	type @"gopkg.in/redis.v3".baseClient struct { @"gopkg.in/redis.v3".connPool @"gopkg.in/redis.v3/internal/pool".Pooler; @"gopkg.in/redis.v3".opt *@"gopkg.in/redis.v3".Options; @"gopkg.in/redis.v3".onClose func() (? error) }
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".baseClient "esc:0x3a") Close () (? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".baseClient "esc:0x9") String () (? string)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".baseClient "esc:0x9") @"gopkg.in/redis.v3".closed () (? bool)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".baseClient "esc:0x9") @"gopkg.in/redis.v3".conn () (? *@"gopkg.in/redis.v3/internal/pool".Conn, ? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".baseClient "esc:0x9") @"gopkg.in/redis.v3".initConn (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".baseClient "esc:0x9") @"gopkg.in/redis.v3".process (@"gopkg.in/redis.v3".cmd·2 @"gopkg.in/redis.v3".Cmder)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".baseClient "esc:0x9") @"gopkg.in/redis.v3".putConn (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn, @"gopkg.in/redis.v3".err·4 error, @"gopkg.in/redis.v3".allowTimeout·5 bool) (? bool)
+	type @"gopkg.in/redis.v3".baseCmd struct { @"gopkg.in/redis.v3"._args []interface {}; @"gopkg.in/redis.v3".err error; @"gopkg.in/redis.v3"._clusterKeyPos int; @"gopkg.in/redis.v3"._readTimeout *@"time".Duration }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".baseCmd "esc:0x22") Err () (? error) { if @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".err != nil { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".err }; return nil }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".baseCmd "esc:0x22") @"gopkg.in/redis.v3".args () (? []interface {}) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3"._args }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".baseCmd "esc:0x9") @"gopkg.in/redis.v3".clusterKey () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".baseCmd "esc:0x22") @"gopkg.in/redis.v3".readTimeout () (? *@"time".Duration) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3"._readTimeout }
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".baseCmd "esc:0x1") @"gopkg.in/redis.v3".setErr (@"gopkg.in/redis.v3".e·2 error) { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".err = @"gopkg.in/redis.v3".e·2 }
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".baseCmd "esc:0x1") @"gopkg.in/redis.v3".setReadTimeout (@"gopkg.in/redis.v3".d·2 @"time".Duration) { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3"._readTimeout = &@"gopkg.in/redis.v3".d·2 }
+	type @"gopkg.in/redis.v3".IntCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val int64 }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".IntCmd "esc:0x102") Result () (? int64, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".IntCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".IntCmd "esc:0x1") Val () (? int64) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".IntCmd "esc:0x22") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".IntCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = int64(0x0); @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".StatusCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val string }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StatusCmd "esc:0x122") Result () (? string, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StatusCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StatusCmd "esc:0x22") Val () (? string) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StatusCmd "esc:0x22") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".StatusCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = string(""); @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".StringSliceCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val []string }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringSliceCmd "esc:0x122") Result () (? []string, ? error) { return @"gopkg.in/redis.v3".cmd·3.Val(), @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.Err() }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringSliceCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringSliceCmd "esc:0x22") Val () (? []string) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringSliceCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".StringSliceCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".StringCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val []byte }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringCmd "esc:0x122") Bytes () (? []byte, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringCmd "esc:0x102") Float64 () (? float64, ? error)
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringCmd "esc:0x102") Int64 () (? int64, ? error)
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringCmd "esc:0x102") Result () (? string, ? error) { return @"gopkg.in/redis.v3".cmd·3.Val(), @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringCmd "esc:0x2a") Scan (@"gopkg.in/redis.v3".val·3 interface {}) (? error)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringCmd "esc:0x102") Uint64 () (? uint64, ? error)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringCmd "esc:0x1") Val () (? string) { return @"gopkg.in/redis.v3".bytesToString(@"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val) }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x3a") (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".StringCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".BitCount struct { Start int64; End int64 }
+	type @"gopkg.in/redis.v3".BoolCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val bool }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".BoolCmd "esc:0x102") Result () (? bool, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".BoolCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".BoolCmd "esc:0x1") Val () (? bool) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".BoolCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".BoolCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = bool(false); @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".ClusterSlotInfo struct { Start int; End int; Addrs []string }
+	type @"gopkg.in/redis.v3".ClusterSlotCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val []@"gopkg.in/redis.v3".ClusterSlotInfo }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".ClusterSlotCmd "esc:0x122") Result () (? []@"gopkg.in/redis.v3".ClusterSlotInfo, ? error) { return @"gopkg.in/redis.v3".cmd·3.Val(), @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.Err() }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ClusterSlotCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ClusterSlotCmd "esc:0x22") Val () (? []@"gopkg.in/redis.v3".ClusterSlotInfo) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ClusterSlotCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".ClusterSlotCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".SliceCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val []interface {} }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".SliceCmd "esc:0x122") Result () (? []interface {}, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".SliceCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".SliceCmd "esc:0x22") Val () (? []interface {}) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".SliceCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".SliceCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".Cmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val interface {} }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".Cmd "esc:0x122") Result () (? interface {}, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".Cmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".Cmd "esc:0x22") Val () (? interface {}) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".Cmd "esc:0x22") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".Cmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".GeoLocation struct { Name string; Longitude float64; Latitude float64; Dist float64; GeoHash int64 }
+	type @"gopkg.in/redis.v3".FloatCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val float64 }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".FloatCmd "esc:0x102") Result () (? float64, ? error) { return @"gopkg.in/redis.v3".cmd·3.Val(), @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.Err() }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".FloatCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".FloatCmd "esc:0x1") Val () (? float64) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".FloatCmd "esc:0x22") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".FloatCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = float64(0); @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".GeoRadiusQuery struct { Radius float64; Unit string; WithCoord bool; WithDist bool; WithGeoHash bool; Count int; Sort string }
+	type @"gopkg.in/redis.v3".GeoLocationCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".q *@"gopkg.in/redis.v3".GeoRadiusQuery; @"gopkg.in/redis.v3".locations []@"gopkg.in/redis.v3".GeoLocation }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".GeoLocationCmd "esc:0x122") Result () (? []@"gopkg.in/redis.v3".GeoLocation, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".locations, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".GeoLocationCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".GeoLocationCmd "esc:0x22") Val () (? []@"gopkg.in/redis.v3".GeoLocation) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".locations }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".GeoLocationCmd "esc:0x9") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".GeoLocationCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".locations = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".StringStringMapCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val map[string]string }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringStringMapCmd "esc:0x122") Result () (? map[string]string, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringStringMapCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringStringMapCmd "esc:0x22") Val () (? map[string]string) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringStringMapCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".StringStringMapCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".ScanCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".cursor int64; @"gopkg.in/redis.v3".keys []string }
+	func (@"gopkg.in/redis.v3".cmd·4 *@"gopkg.in/redis.v3".ScanCmd "esc:0x902") Result () (? int64, ? []string, ? error) { return @"gopkg.in/redis.v3".cmd·4.@"gopkg.in/redis.v3".cursor, @"gopkg.in/redis.v3".cmd·4.@"gopkg.in/redis.v3".keys, @"gopkg.in/redis.v3".cmd·4.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ScanCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".ScanCmd "esc:0x102") Val () (? int64, ? []string) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".cursor, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".keys }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ScanCmd "esc:0x22") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".ScanCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".cursor = int64(0x0); @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".keys = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".DurationCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val @"time".Duration; @"gopkg.in/redis.v3".precision @"time".Duration }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".DurationCmd "esc:0x102") Result () (? @"time".Duration, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".DurationCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".DurationCmd "esc:0x1") Val () (? @"time".Duration) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".DurationCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x3a") (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".DurationCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = @"time".Duration(0x0); @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".StringIntMapCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val map[string]int64 }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".StringIntMapCmd "esc:0x122") Result () (? map[string]int64, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringIntMapCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringIntMapCmd "esc:0x22") Val () (? map[string]int64) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".StringIntMapCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".StringIntMapCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".BoolSliceCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val []bool }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".BoolSliceCmd "esc:0x122") Result () (? []bool, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".BoolSliceCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".BoolSliceCmd "esc:0x22") Val () (? []bool) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".BoolSliceCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".BoolSliceCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".Sort struct { By string; Offset float64; Count float64; Get []string; Order string; IsAlpha bool; Store string }
+	func (@"gopkg.in/redis.v3".sort·2 *@"gopkg.in/redis.v3".Sort "esc:0x9") @"gopkg.in/redis.v3".args (@"gopkg.in/redis.v3".key·3 string) (? []interface {})
+	type @"gopkg.in/redis.v3".Z struct { Score float64; Member interface {} }
+	type @"gopkg.in/redis.v3".ZStore struct { Weights []float64; Aggregate string }
+	type @"gopkg.in/redis.v3".ZRangeByScore struct { Min string; Max string; Offset int64; Count int64 }
+	type @"gopkg.in/redis.v3".ZSliceCmd struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseCmd; @"gopkg.in/redis.v3".val []@"gopkg.in/redis.v3".Z }
+	func (@"gopkg.in/redis.v3".cmd·3 *@"gopkg.in/redis.v3".ZSliceCmd "esc:0x122") Result () (? []@"gopkg.in/redis.v3".Z, ? error) { return @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".val, @"gopkg.in/redis.v3".cmd·3.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ZSliceCmd) String () (? string)
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ZSliceCmd "esc:0x22") Val () (? []@"gopkg.in/redis.v3".Z) { return @"gopkg.in/redis.v3".cmd·2.@"gopkg.in/redis.v3".val }
+	func (@"gopkg.in/redis.v3".cmd·2 *@"gopkg.in/redis.v3".ZSliceCmd "esc:0x1") @"gopkg.in/redis.v3".readReply (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3".cmd·1 *@"gopkg.in/redis.v3".ZSliceCmd "esc:0x1") @"gopkg.in/redis.v3".reset () { @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".val = nil; @"gopkg.in/redis.v3".cmd·1.@"gopkg.in/redis.v3".baseCmd.@"gopkg.in/redis.v3".err = nil }
+	type @"gopkg.in/redis.v3".commandable struct { @"gopkg.in/redis.v3".process func(@"gopkg.in/redis.v3".cmd @"gopkg.in/redis.v3".Cmder) }
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Append (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Auth (@"gopkg.in/redis.v3".password·3 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BLPop (@"gopkg.in/redis.v3".timeout·3 @"time".Duration, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BRPop (@"gopkg.in/redis.v3".timeout·3 @"time".Duration, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BRPopLPush (@"gopkg.in/redis.v3".source·3 string, @"gopkg.in/redis.v3".destination·4 string, @"gopkg.in/redis.v3".timeout·5 @"time".Duration) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BgRewriteAOF () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BgSave () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BitCount (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".bitCount·4 *@"gopkg.in/redis.v3".BitCount "esc:0x1") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BitOpAnd (@"gopkg.in/redis.v3".destKey·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BitOpNot (@"gopkg.in/redis.v3".destKey·3 string, @"gopkg.in/redis.v3".key·4 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BitOpOr (@"gopkg.in/redis.v3".destKey·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BitOpXor (@"gopkg.in/redis.v3".destKey·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") BitPos (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".bit·4 int64, @"gopkg.in/redis.v3".pos·5 ...int64 "esc:0x1") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClientKill (@"gopkg.in/redis.v3".ipPort·3 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClientList () (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClientPause (@"gopkg.in/redis.v3".dur·3 @"time".Duration) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClientSetName (@"gopkg.in/redis.v3".name·3 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterAddSlots (@"gopkg.in/redis.v3".slots·3 ...int "esc:0x1") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterAddSlotsRange (@"gopkg.in/redis.v3".min·3 int, @"gopkg.in/redis.v3".max·4 int) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterCountFailureReports (@"gopkg.in/redis.v3".nodeID·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterCountKeysInSlot (@"gopkg.in/redis.v3".slot·3 int) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterDelSlots (@"gopkg.in/redis.v3".slots·3 ...int "esc:0x1") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterDelSlotsRange (@"gopkg.in/redis.v3".min·3 int, @"gopkg.in/redis.v3".max·4 int) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterFailover () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterForget (@"gopkg.in/redis.v3".nodeID·3 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterInfo () (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterKeySlot (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterMeet (@"gopkg.in/redis.v3".host·3 string, @"gopkg.in/redis.v3".port·4 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterNodes () (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterReplicate (@"gopkg.in/redis.v3".nodeID·3 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterResetHard () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterResetSoft () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterSaveConfig () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterSlaves (@"gopkg.in/redis.v3".nodeID·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ClusterSlots () (? *@"gopkg.in/redis.v3".ClusterSlotCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ConfigGet (@"gopkg.in/redis.v3".parameter·3 string) (? *@"gopkg.in/redis.v3".SliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ConfigResetStat () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ConfigSet (@"gopkg.in/redis.v3".parameter·3 string, @"gopkg.in/redis.v3".value·4 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") DbSize () (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") DebugObject (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Decr (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") DecrBy (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".decrement·4 int64) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Del (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Dump (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Echo (@"gopkg.in/redis.v3".message·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Eval (@"gopkg.in/redis.v3".script·3 string, @"gopkg.in/redis.v3".keys·4 []string "esc:0x9", @"gopkg.in/redis.v3".args·5 []string "esc:0x9") (? *@"gopkg.in/redis.v3".Cmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") EvalSha (@"gopkg.in/redis.v3".sha1·3 string, @"gopkg.in/redis.v3".keys·4 []string "esc:0x9", @"gopkg.in/redis.v3".args·5 []string "esc:0x9") (? *@"gopkg.in/redis.v3".Cmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Exists (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Expire (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".expiration·4 @"time".Duration) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ExpireAt (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".tm·4 @"time".Time "esc:0x1") (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") FlushAll () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") FlushDb () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GeoAdd (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".geoLocation·4 ...*@"gopkg.in/redis.v3".GeoLocation "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GeoDist (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member1·4 string, @"gopkg.in/redis.v3".member2·5 string, @"gopkg.in/redis.v3".unit·6 string) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GeoHash (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GeoRadius (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".longitude·4 float64, @"gopkg.in/redis.v3".latitude·5 float64, @"gopkg.in/redis.v3".query·6 *@"gopkg.in/redis.v3".GeoRadiusQuery) (? *@"gopkg.in/redis.v3".GeoLocationCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GeoRadiusByMember (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 string, @"gopkg.in/redis.v3".query·5 *@"gopkg.in/redis.v3".GeoRadiusQuery) (? *@"gopkg.in/redis.v3".GeoLocationCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Get (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GetBit (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".offset·4 int64) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GetRange (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".end·5 int64) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") GetSet (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 interface {}) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HDel (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".fields·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HExists (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HGet (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HGetAll (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HGetAllMap (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringStringMapCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HIncrBy (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string, @"gopkg.in/redis.v3".incr·5 int64) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HIncrByFloat (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string, @"gopkg.in/redis.v3".incr·5 float64) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HKeys (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HLen (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HMGet (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".fields·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".SliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HMSet (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string, @"gopkg.in/redis.v3".value·5 string, @"gopkg.in/redis.v3".pairs·6 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HMSetMap (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".fields·4 map[string]string "esc:0x9") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HScan (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".cursor·4 int64, @"gopkg.in/redis.v3".match·5 string, @"gopkg.in/redis.v3".count·6 int64) (? *@"gopkg.in/redis.v3".ScanCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HSet (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string, @"gopkg.in/redis.v3".value·5 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HSetNX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".field·4 string, @"gopkg.in/redis.v3".value·5 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") HVals (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Incr (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") IncrBy (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 int64) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") IncrByFloat (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 float64) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Info (@"gopkg.in/redis.v3".section·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Keys (@"gopkg.in/redis.v3".pattern·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LIndex (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".index·4 int64) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LInsert (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".op·4 string, @"gopkg.in/redis.v3".pivot·5 string, @"gopkg.in/redis.v3".value·6 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LLen (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LPop (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LPush (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".values·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LPushX (@"gopkg.in/redis.v3".key·3 interface {}, @"gopkg.in/redis.v3".value·4 interface {}) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LRange (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LRem (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".count·4 int64, @"gopkg.in/redis.v3".value·5 interface {}) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LSet (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".index·4 int64, @"gopkg.in/redis.v3".value·5 interface {}) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LTrim (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") LastSave () (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") MGet (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".SliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") MSet (@"gopkg.in/redis.v3".pairs·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") MSetNX (@"gopkg.in/redis.v3".pairs·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Migrate (@"gopkg.in/redis.v3".host·3 string, @"gopkg.in/redis.v3".port·4 string, @"gopkg.in/redis.v3".key·5 string, @"gopkg.in/redis.v3".db·6 int64, @"gopkg.in/redis.v3".timeout·7 @"time".Duration) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Move (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".db·4 int64) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ObjectEncoding (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ObjectIdleTime (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".DurationCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ObjectRefCount (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PExpire (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".expiration·4 @"time".Duration) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PExpireAt (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".tm·4 @"time".Time "esc:0x1") (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PFAdd (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".fields·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PFCount (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PFMerge (@"gopkg.in/redis.v3".dest·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PTTL (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".DurationCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Persist (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Ping () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".commandable "esc:0x1") Process (@"gopkg.in/redis.v3".cmd·2 @"gopkg.in/redis.v3".Cmder)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PubSubChannels (@"gopkg.in/redis.v3".pattern·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PubSubNumPat () (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") PubSubNumSub (@"gopkg.in/redis.v3".channels·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringIntMapCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Quit () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RPop (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RPopLPush (@"gopkg.in/redis.v3".source·3 string, @"gopkg.in/redis.v3".destination·4 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RPush (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".values·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RPushX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 interface {}) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RandomKey () (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ReadWrite () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Readonly () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Rename (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".newkey·4 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RenameNX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".newkey·4 string) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Restore (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".ttl·4 @"time".Duration, @"gopkg.in/redis.v3".value·5 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") RestoreReplace (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".ttl·4 @"time".Duration, @"gopkg.in/redis.v3".value·5 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SAdd (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SCard (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SDiff (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SDiffStore (@"gopkg.in/redis.v3".destination·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SInter (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SInterStore (@"gopkg.in/redis.v3".destination·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SIsMember (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 interface {}) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SMembers (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SMove (@"gopkg.in/redis.v3".source·3 string, @"gopkg.in/redis.v3".destination·4 string, @"gopkg.in/redis.v3".member·5 interface {}) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SPop (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SPopN (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".count·4 int64) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SRandMember (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SRandMemberN (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".count·4 int64) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SRem (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SScan (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".cursor·4 int64, @"gopkg.in/redis.v3".match·5 string, @"gopkg.in/redis.v3".count·6 int64) (? *@"gopkg.in/redis.v3".ScanCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SUnion (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SUnionStore (@"gopkg.in/redis.v3".destination·3 string, @"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Save () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Scan (@"gopkg.in/redis.v3".cursor·3 int64, @"gopkg.in/redis.v3".match·4 string, @"gopkg.in/redis.v3".count·5 int64) (? *@"gopkg.in/redis.v3".ScanCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ScriptExists (@"gopkg.in/redis.v3".scripts·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".BoolSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ScriptFlush () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ScriptKill () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ScriptLoad (@"gopkg.in/redis.v3".script·3 string) (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Select (@"gopkg.in/redis.v3".index·3 int64) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Set (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 interface {}, @"gopkg.in/redis.v3".expiration·5 @"time".Duration) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SetBit (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".offset·4 int64, @"gopkg.in/redis.v3".value·5 int) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SetNX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 interface {}, @"gopkg.in/redis.v3".expiration·5 @"time".Duration) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SetRange (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".offset·4 int64, @"gopkg.in/redis.v3".value·5 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SetXX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".value·4 interface {}, @"gopkg.in/redis.v3".expiration·5 @"time".Duration) (? *@"gopkg.in/redis.v3".BoolCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Shutdown () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ShutdownNoSave () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ShutdownSave () (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SlaveOf (@"gopkg.in/redis.v3".host·3 string, @"gopkg.in/redis.v3".port·4 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".commandable "esc:0x1") SlowLog ()
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Sort (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".sort·4 @"gopkg.in/redis.v3".Sort) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") SortInterfaces (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".sort·4 @"gopkg.in/redis.v3".Sort) (? *@"gopkg.in/redis.v3".SliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") StrLen (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".commandable "esc:0x1") Sync ()
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") TTL (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".DurationCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Time () (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") Type (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZAdd (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZAddCh (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZAddNX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZAddNXCh (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZAddXX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZAddXXCh (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZCard (@"gopkg.in/redis.v3".key·3 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZCount (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".min·4 string, @"gopkg.in/redis.v3".max·5 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZIncr (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 @"gopkg.in/redis.v3".Z) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZIncrBy (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".increment·4 float64, @"gopkg.in/redis.v3".member·5 string) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZIncrNX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 @"gopkg.in/redis.v3".Z) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZIncrXX (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 @"gopkg.in/redis.v3".Z) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZInterStore (@"gopkg.in/redis.v3".destination·3 string, @"gopkg.in/redis.v3".store·4 @"gopkg.in/redis.v3".ZStore, @"gopkg.in/redis.v3".keys·5 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRange (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRangeByLex (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".opt·4 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRangeByScore (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".opt·4 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRangeByScoreWithScores (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".opt·4 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".ZSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRangeWithScores (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".ZSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRank (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRem (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".members·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRemRangeByRank (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRemRangeByScore (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".min·4 string, @"gopkg.in/redis.v3".max·5 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRevRange (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRevRangeByLex (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".opt·4 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRevRangeByScore (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".opt·4 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRevRangeByScoreWithScores (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".opt·4 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".ZSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRevRangeWithScores (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64) (? *@"gopkg.in/redis.v3".ZSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZRevRank (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZScan (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".cursor·4 int64, @"gopkg.in/redis.v3".match·5 string, @"gopkg.in/redis.v3".count·6 int64) (? *@"gopkg.in/redis.v3".ScanCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZScore (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".member·4 string) (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") ZUnionStore (@"gopkg.in/redis.v3".dest·3 string, @"gopkg.in/redis.v3".store·4 @"gopkg.in/redis.v3".ZStore, @"gopkg.in/redis.v3".keys·5 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".bitOp (@"gopkg.in/redis.v3".op·3 string, @"gopkg.in/redis.v3".destKey·4 string, @"gopkg.in/redis.v3".keys·5 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".shutdown (@"gopkg.in/redis.v3".modifier·3 string) (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".zAdd (@"gopkg.in/redis.v3".a·3 []interface {}, @"gopkg.in/redis.v3".n·4 int, @"gopkg.in/redis.v3".members·5 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".zIncr (@"gopkg.in/redis.v3".a·3 []interface {}, @"gopkg.in/redis.v3".n·4 int, @"gopkg.in/redis.v3".members·5 ...@"gopkg.in/redis.v3".Z "esc:0x9") (? *@"gopkg.in/redis.v3".FloatCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".zRange (@"gopkg.in/redis.v3".key·3 string, @"gopkg.in/redis.v3".start·4 int64, @"gopkg.in/redis.v3".stop·5 int64, @"gopkg.in/redis.v3".withScores·6 bool) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".zRangeBy (@"gopkg.in/redis.v3".zcmd·3 string, @"gopkg.in/redis.v3".key·4 string, @"gopkg.in/redis.v3".opt·5 @"gopkg.in/redis.v3".ZRangeByScore, @"gopkg.in/redis.v3".withScores·6 bool) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".commandable "esc:0x1") @"gopkg.in/redis.v3".zRevRangeBy (@"gopkg.in/redis.v3".zcmd·3 string, @"gopkg.in/redis.v3".key·4 string, @"gopkg.in/redis.v3".opt·5 @"gopkg.in/redis.v3".ZRangeByScore) (? *@"gopkg.in/redis.v3".StringSliceCmd)
+	type @"gopkg.in/redis.v3".Multi struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".commandable; @"gopkg.in/redis.v3".base *@"gopkg.in/redis.v3".baseClient; @"gopkg.in/redis.v3".cmds []@"gopkg.in/redis.v3".Cmder; @"gopkg.in/redis.v3".closed bool }
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Multi "esc:0x4a") Close () (? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Multi "esc:0x1") Discard () (? error) { if @"gopkg.in/redis.v3".c·2.@"gopkg.in/redis.v3".cmds == nil { return @"gopkg.in/redis.v3".errDiscard }; @"gopkg.in/redis.v3".c·2.@"gopkg.in/redis.v3".cmds = @"gopkg.in/redis.v3".c·2.@"gopkg.in/redis.v3".cmds[:int(0x1)]; return nil }
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".Multi "esc:0x2a") Exec (@"gopkg.in/redis.v3".f·4 func() (? error) "esc:0x102") (? []@"gopkg.in/redis.v3".Cmder, ? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Multi "esc:0x1") Unwatch (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Multi "esc:0x1") Watch (@"gopkg.in/redis.v3".keys·3 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".StatusCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Multi "esc:0x1") @"gopkg.in/redis.v3".execCmds (@"gopkg.in/redis.v3".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn, @"gopkg.in/redis.v3".cmds·4 []@"gopkg.in/redis.v3".Cmder "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".Multi "esc:0x9") @"gopkg.in/redis.v3".process (@"gopkg.in/redis.v3".cmd·2 @"gopkg.in/redis.v3".Cmder)
+	type @"gopkg.in/redis.v3".Message struct { Channel string; Pattern string; Payload string }
+	func (@"gopkg.in/redis.v3".m·2 *@"gopkg.in/redis.v3".Message "esc:0x9") String () (? string)
+	type @"gopkg.in/redis.v3".PubSub struct { @"gopkg.in/redis.v3".base *@"gopkg.in/redis.v3".baseClient; @"gopkg.in/redis.v3".channels []string; @"gopkg.in/redis.v3".patterns []string; @"gopkg.in/redis.v3".nsub int }
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x4a") Close () (? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x9") PSubscribe (@"gopkg.in/redis.v3".patterns·3 ...string "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x9") PUnsubscribe (@"gopkg.in/redis.v3".patterns·3 ...string "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x9") Ping (@"gopkg.in/redis.v3".payload·3 string) (? error)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".PubSub "esc:0x9") Receive () (? interface {}, ? error)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".PubSub "esc:0x9") ReceiveMessage () (? *@"gopkg.in/redis.v3".Message, ? error)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".PubSub "esc:0x9") ReceiveTimeout (@"gopkg.in/redis.v3".timeout·4 @"time".Duration) (? interface {}, ? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x9") Subscribe (@"gopkg.in/redis.v3".channels·3 ...string "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x9") Unsubscribe (@"gopkg.in/redis.v3".channels·3 ...string "esc:0x9") (? error)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".PubSub "esc:0x1") @"gopkg.in/redis.v3".newMessage (@"gopkg.in/redis.v3".reply·4 []interface {} "esc:0xa") (? interface {}, ? error)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".PubSub "esc:0x9") @"gopkg.in/redis.v3".putConn (@"gopkg.in/redis.v3".cn·2 *@"gopkg.in/redis.v3/internal/pool".Conn, @"gopkg.in/redis.v3".err·3 error)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".PubSub "esc:0x9") @"gopkg.in/redis.v3".receiveMessage (@"gopkg.in/redis.v3".timeout·4 @"time".Duration) (? *@"gopkg.in/redis.v3".Message, ? error)
+	func (@"gopkg.in/redis.v3".c·1 *@"gopkg.in/redis.v3".PubSub "esc:0x9") @"gopkg.in/redis.v3".resubscribe ()
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".PubSub "esc:0x9") @"gopkg.in/redis.v3".subscribe (@"gopkg.in/redis.v3".redisCmd·3 string, @"gopkg.in/redis.v3".channels·4 ...string "esc:0x9") (? error)
+	import sync "sync" // indirect
+	type @"sync".Mutex struct { @"sync".state int32; @"sync".sema uint32 }
+	func (@"sync".m·1 *@"sync".Mutex) Lock ()
+	func (@"sync".m·1 *@"sync".Mutex) Unlock ()
+	type @"gopkg.in/redis.v3".Pipeline struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".commandable; @"gopkg.in/redis.v3".client @"gopkg.in/redis.v3".baseClient; @"gopkg.in/redis.v3".mu @"sync".Mutex; @"gopkg.in/redis.v3".cmds []@"gopkg.in/redis.v3".Cmder; @"gopkg.in/redis.v3".closed int32 }
+	func (@"gopkg.in/redis.v3".pipe·2 *@"gopkg.in/redis.v3".Pipeline) Close () (? error)
+	func (@"gopkg.in/redis.v3".pipe·2 *@"gopkg.in/redis.v3".Pipeline) Discard () (? error)
+	func (@"gopkg.in/redis.v3".pipe·3 *@"gopkg.in/redis.v3".Pipeline) Exec () (@"gopkg.in/redis.v3".cmds·1 []@"gopkg.in/redis.v3".Cmder, @"gopkg.in/redis.v3".retErr·2 error)
+	func (@"gopkg.in/redis.v3".pipe·2 *@"gopkg.in/redis.v3".Pipeline) @"gopkg.in/redis.v3".isClosed () (? bool)
+	func (@"gopkg.in/redis.v3".pipe·1 *@"gopkg.in/redis.v3".Pipeline) @"gopkg.in/redis.v3".process (@"gopkg.in/redis.v3".cmd·2 @"gopkg.in/redis.v3".Cmder)
+	type @"gopkg.in/redis.v3".PoolStats struct { Requests uint32; Hits uint32; Waits uint32; Timeouts uint32; TotalConns uint32; FreeConns uint32 }
+	type @"gopkg.in/redis.v3".Client struct { @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".baseClient; @"gopkg.in/redis.v3".? @"gopkg.in/redis.v3".commandable }
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Client "esc:0x1") ClientGetName () (? *@"gopkg.in/redis.v3".StringCmd)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Client) Multi () (? *@"gopkg.in/redis.v3".Multi)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".Client) PSubscribe (@"gopkg.in/redis.v3".channels·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".PubSub, ? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Client "esc:0xa") Pipeline () (? *@"gopkg.in/redis.v3".Pipeline)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".Client "esc:0x9") Pipelined (@"gopkg.in/redis.v3".fn·4 func(? *@"gopkg.in/redis.v3".Pipeline) (? error) "esc:0x102") (? []@"gopkg.in/redis.v3".Cmder, ? error)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Client "esc:0x9") PoolStats () (? *@"gopkg.in/redis.v3".PoolStats)
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Client) PubSub () (? *@"gopkg.in/redis.v3".PubSub) { return (&@"gopkg.in/redis.v3".PubSub{ @"gopkg.in/redis.v3".base:(&@"gopkg.in/redis.v3".baseClient{ @"gopkg.in/redis.v3".opt:@"gopkg.in/redis.v3".c·2.@"gopkg.in/redis.v3".baseClient.@"gopkg.in/redis.v3".opt, @"gopkg.in/redis.v3".connPool:@"gopkg.in/redis.v3/internal/pool".NewStickyConnPool(@"gopkg.in/redis.v3".c·2.@"gopkg.in/redis.v3".baseClient.@"gopkg.in/redis.v3".connPool.(*@"gopkg.in/redis.v3/internal/pool".ConnPool), bool(false)) }) }) }
+	func (@"gopkg.in/redis.v3".c·2 *@"gopkg.in/redis.v3".Client "esc:0x1") Publish (@"gopkg.in/redis.v3".channel·3 string, @"gopkg.in/redis.v3".message·4 string) (? *@"gopkg.in/redis.v3".IntCmd)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".Client) Subscribe (@"gopkg.in/redis.v3".channels·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".PubSub, ? error)
+	func (@"gopkg.in/redis.v3".c·3 *@"gopkg.in/redis.v3".Client) Watch (@"gopkg.in/redis.v3".keys·4 ...string "esc:0x9") (? *@"gopkg.in/redis.v3".Multi, ? error)
+	var @"".MyCluster *@"gopkg.in/redis.v3".Client
+	func @"".IncrementKey (@"".key·1 string)
+	func @"".SETKeyWithTTL (@"".key·1 string)
+	func @"".DecerementKey (@"".key·1 string)
+	func @"".init ()
+	var @"time".months [12]string
+	var @"time".days [7]string
+	var @"time".Local *@"time".Location
+	var @"time".UTC *@"time".Location
+	var @"bufio".ErrInvalidUnreadByte error
+	var @"bufio".ErrInvalidUnreadRune error
+	func @"gopkg.in/redis.v3".bytesToString (@"gopkg.in/redis.v3".b·2 []byte "esc:0x1") (? string) { var @"gopkg.in/redis.v3".bytesHeader·3 *@"reflect".SliceHeader; ; @"gopkg.in/redis.v3".bytesHeader·3 = (*@"reflect".SliceHeader)(@"unsafe".Pointer(&@"gopkg.in/redis.v3".b·2)); var @"gopkg.in/redis.v3".strHeader·4 @"reflect".StringHeader; ; @"gopkg.in/redis.v3".strHeader·4 = (@"reflect".StringHeader{ Data:@"gopkg.in/redis.v3".bytesHeader·3.Data, Len:@"gopkg.in/redis.v3".bytesHeader·3.Len }); return *(*string)(@"unsafe".Pointer(&@"gopkg.in/redis.v3".strHeader·4)) }
+	var @"gopkg.in/redis.v3".errDiscard error
+	type @"gopkg.in/redis.v3/internal/pool".dialer func() (? @"net".Conn, ? error)
+	import ratelimit "gopkg.in/bsm/ratelimit.v1" // indirect
+	type @"gopkg.in/bsm/ratelimit.v1".RateLimiter struct { @"gopkg.in/bsm/ratelimit.v1".rate uint64; @"gopkg.in/bsm/ratelimit.v1".allowance uint64; @"gopkg.in/bsm/ratelimit.v1".max uint64; @"gopkg.in/bsm/ratelimit.v1".unit uint64; @"gopkg.in/bsm/ratelimit.v1".lastCheck uint64 }
+	func (@"gopkg.in/bsm/ratelimit.v1".rl·2 *@"gopkg.in/bsm/ratelimit.v1".RateLimiter) Limit () (? bool)
+	func (@"gopkg.in/bsm/ratelimit.v1".rl·1 *@"gopkg.in/bsm/ratelimit.v1".RateLimiter) Undo ()
+	func (@"gopkg.in/bsm/ratelimit.v1".rl·1 *@"gopkg.in/bsm/ratelimit.v1".RateLimiter) UpdateRate (@"gopkg.in/bsm/ratelimit.v1".rate·2 int)
+	import atomic "sync/atomic" // indirect
+	type @"sync/atomic".Value struct { @"sync/atomic".v interface {} }
+	func (@"sync/atomic".v·2 *@"sync/atomic".Value) Load () (@"sync/atomic".x·1 interface {})
+	func (@"sync/atomic".v·1 *@"sync/atomic".Value) Store (@"sync/atomic".x·2 interface {})
+	type @"gopkg.in/redis.v3/internal/pool".ConnPool struct { @"gopkg.in/redis.v3/internal/pool"._dial @"gopkg.in/redis.v3/internal/pool".dialer; DialLimiter *@"gopkg.in/bsm/ratelimit.v1".RateLimiter; OnClose func(? *@"gopkg.in/redis.v3/internal/pool".Conn) (? error); @"gopkg.in/redis.v3/internal/pool".poolTimeout @"time".Duration; @"gopkg.in/redis.v3/internal/pool".idleTimeout @"time".Duration; @"gopkg.in/redis.v3/internal/pool".queue chan struct {}; @"gopkg.in/redis.v3/internal/pool".connsMu @"sync".Mutex; @"gopkg.in/redis.v3/internal/pool".conns []*@"gopkg.in/redis.v3/internal/pool".Conn; @"gopkg.in/redis.v3/internal/pool".freeConnsMu @"sync".Mutex; @"gopkg.in/redis.v3/internal/pool".freeConns []*@"gopkg.in/redis.v3/internal/pool".Conn; @"gopkg.in/redis.v3/internal/pool".stats @"gopkg.in/redis.v3/internal/pool".PoolStats; @"gopkg.in/redis.v3/internal/pool"._closed int32; @"gopkg.in/redis.v3/internal/pool".lastErr @"sync/atomic".Value }
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Close () (@"gopkg.in/redis.v3/internal/pool".retErr·1 error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Closed () (? bool)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) FreeLen () (? int)
+	func (@"gopkg.in/redis.v3/internal/pool".p·3 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Get () (? *@"gopkg.in/redis.v3/internal/pool".Conn, ? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Len () (? int)
+	func (@"gopkg.in/redis.v3/internal/pool".p·3 *@"gopkg.in/redis.v3/internal/pool".ConnPool) NewConn () (? *@"gopkg.in/redis.v3/internal/pool".Conn, ? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) PopFree () (? *@"gopkg.in/redis.v3/internal/pool".Conn)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Put (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·3 *@"gopkg.in/redis.v3/internal/pool".ConnPool) ReapStaleConns () (@"gopkg.in/redis.v3/internal/pool".n·1 int, @"gopkg.in/redis.v3/internal/pool".err·2 error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Remove (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x9", @"gopkg.in/redis.v3/internal/pool".reason·4 error) (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) Stats () (? *@"gopkg.in/redis.v3/internal/pool".PoolStats)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool "esc:0x1") @"gopkg.in/redis.v3/internal/pool".closeConn (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn) (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·3 *@"gopkg.in/redis.v3/internal/pool".ConnPool) @"gopkg.in/redis.v3/internal/pool".dial () (? @"net".Conn, ? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool) @"gopkg.in/redis.v3/internal/pool".loadLastErr () (? string)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool "esc:0x32") @"gopkg.in/redis.v3/internal/pool".popFree () (? *@"gopkg.in/redis.v3/internal/pool".Conn) { if len(@"gopkg.in/redis.v3/internal/pool".p·2.@"gopkg.in/redis.v3/internal/pool".freeConns) == int(0x0) { return nil }; var @"gopkg.in/redis.v3/internal/pool".idx·3 int; ; @"gopkg.in/redis.v3/internal/pool".idx·3 = len(@"gopkg.in/redis.v3/internal/pool".p·2.@"gopkg.in/redis.v3/internal/pool".freeConns) - int(0x1); var @"gopkg.in/redis.v3/internal/pool".cn·4 *@"gopkg.in/redis.v3/internal/pool".Conn; ; @"gopkg.in/redis.v3/internal/pool".cn·4 = @"gopkg.in/redis.v3/internal/pool".p·2.@"gopkg.in/redis.v3/internal/pool".freeConns[@"gopkg.in/redis.v3/internal/pool".idx·3]; @"gopkg.in/redis.v3/internal/pool".p·2.@"gopkg.in/redis.v3/internal/pool".freeConns = @"gopkg.in/redis.v3/internal/pool".p·2.@"gopkg.in/redis.v3/internal/pool".freeConns[:@"gopkg.in/redis.v3/internal/pool".idx·3]; return @"gopkg.in/redis.v3/internal/pool".cn·4 }
+	func (@"gopkg.in/redis.v3/internal/pool".p·1 *@"gopkg.in/redis.v3/internal/pool".ConnPool) @"gopkg.in/redis.v3/internal/pool".reaper (@"gopkg.in/redis.v3/internal/pool".frequency·2 @"time".Duration)
+	func (@"gopkg.in/redis.v3/internal/pool".p·1 *@"gopkg.in/redis.v3/internal/pool".ConnPool) @"gopkg.in/redis.v3/internal/pool".remove (@"gopkg.in/redis.v3/internal/pool".cn·2 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x1", @"gopkg.in/redis.v3/internal/pool".reason·3 error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·1 *@"gopkg.in/redis.v3/internal/pool".ConnPool) @"gopkg.in/redis.v3/internal/pool".storeLastErr (@"gopkg.in/redis.v3/internal/pool".err·2 string)
+	type @"gopkg.in/redis.v3/internal/pool".StickyConnPool struct { @"gopkg.in/redis.v3/internal/pool".pool *@"gopkg.in/redis.v3/internal/pool".ConnPool; @"gopkg.in/redis.v3/internal/pool".reusable bool; @"gopkg.in/redis.v3/internal/pool".cn *@"gopkg.in/redis.v3/internal/pool".Conn; @"gopkg.in/redis.v3/internal/pool".closed bool; @"gopkg.in/redis.v3/internal/pool".mx @"sync".Mutex }
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) Close () (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) Closed () (? bool)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) First () (? *@"gopkg.in/redis.v3/internal/pool".Conn)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) FreeLen () (? int)
+	func (@"gopkg.in/redis.v3/internal/pool".p·3 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) Get () (? *@"gopkg.in/redis.v3/internal/pool".Conn, ? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) Len () (? int)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) Put (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x1") (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) Remove (@"gopkg.in/redis.v3/internal/pool".cn·3 *@"gopkg.in/redis.v3/internal/pool".Conn "esc:0x1", @"gopkg.in/redis.v3/internal/pool".reason·4 error) (? error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool "esc:0x1") Stats () (? *@"gopkg.in/redis.v3/internal/pool".PoolStats) { return nil }
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool "esc:0x9") @"gopkg.in/redis.v3/internal/pool".put () (@"gopkg.in/redis.v3/internal/pool".err·1 error)
+	func (@"gopkg.in/redis.v3/internal/pool".p·2 *@"gopkg.in/redis.v3/internal/pool".StickyConnPool "esc:0x9") @"gopkg.in/redis.v3/internal/pool".remove (@"gopkg.in/redis.v3/internal/pool".reason·3 error) (? error)
+	func @"gopkg.in/redis.v3/internal/pool".NewStickyConnPool (@"gopkg.in/redis.v3/internal/pool".pool·2 *@"gopkg.in/redis.v3/internal/pool".ConnPool, @"gopkg.in/redis.v3/internal/pool".reusable·3 bool) (? *@"gopkg.in/redis.v3/internal/pool".StickyConnPool) { return (&@"gopkg.in/redis.v3/internal/pool".StickyConnPool{ @"gopkg.in/redis.v3/internal/pool".pool:@"gopkg.in/redis.v3/internal/pool".pool·2, @"gopkg.in/redis.v3/internal/pool".reusable:@"gopkg.in/redis.v3/internal/pool".reusable·3 }) }
+	import reflect "reflect" // indirect
+	type @"reflect".SliceHeader struct { Data uintptr; Len int; Cap int }
+	import unsafe "unsafe" // indirect
+	type @"reflect".StringHeader struct { Data uintptr; Len int }
+
+$$
+_go_.o          0           0     0     644     10045     `
+go object darwin amd64 go1.6.2 X:none
+
+!
+  go13ld&gopkg.in/redis.v3.a0github.com/golang/glog.atime.a �"".getRedis  �  �eH�%    H;a��   H��H�    H�$�    H�D$H��H�� ��   W��    H�-    H�hH�@   1�H�h(H�h0H�@8    H�@`#   H� ��   H�hHH�@P���H�@X���H�@h���H� �#�   H�hpH�$�    H�\$H�\$H��É �x����    �5��������
+      4  @type.gopkg.in/redis%2ev3.Options   F  "runtime.newobject   z�  runtime.duffzero   �  4go.string."localhost:6379"   �  :gopkg.in/redis%2ev3.NewClient   �  0runtime.morestack_noctxt      "".~r0  @type.*gopkg.in/redis%2ev3.Client  �  � B&*
+
+
+  "� Tgclocals·5184031d3a32a42d85027f073f873668 Tgclocals·33cdeccccebe80329f1fdbee7f5874cb   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go�"".IncrementKey  �  �eH�%    H;a�  H��pH�    H�$H�<$ ��   H�$ H�\$xH�\$H��$�   H�\$�    1�H�\$HH�\$P1�H�\$8H�\$@H�\$8H�� ��   H�D$`   H�D$h   H�\$XH�    H�$H�\$HH�\$H�D$    �    H�L$H�D$ H�\$XH�L$(H�H�D$0�=     u+H�CH�\$XH�$H�\$`H�\$H�\$hH�\$�    H��p�L�CL�$H�D$�    �ŉ�[����%    �����    �����
+      4  "".MyCluster   �  Ngopkg.in/redis%2ev3.(*commandable).Incr   �  type.string   �  runtime.convT2E   � (runtime.writeBarrier   �  6github.com/golang/glog.Info   �  .runtime.writebarrierptr   �  0runtime.morestack_noctxt    �  
+"".autotmp_0006 �"type.interface {} "".autotmp_0005 o(type.[1]interface {} "".autotmp_0002 /&type.[]interface {} "".autotmp_0001 Otype.string "".key  type.string  ����'�
+ �  J7�
+  IaK$ Tgclocals·f7309186bf9eeb0f8ece2eb16f2dc110 Tgclocals·e686e33109a1bc2792301626c7b401c5   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go� "".SETKeyWithTTL  �  �eH�%    H;a�  H��hH�    H�\$XH�D$`   H�    H�$H�\$XH�\$H�D$    �    H�\$H�|$H�H�H�KH�OH�    H�$H�<$ ��   H�$ H�\$pH�\$H�\$xH�\$H� �d�E   H�\$(�    H�D$0H�� tg1�H�hH�� tTH��H�@H�K H�D$8H�L$@H�� t4H�D$HH�$H�L$PH�L$�    H�\$H�H�$H�KH�L$�    H��h�1�H��밉 땉%    �Q����    ���������������
+      4  go.string."val"   ^  type.string   �  runtime.convT2E   �  "".MyCluster   �  Lgopkg.in/redis%2ev3.(*commandable).Set   �  runtime.convI2E   �  runtime.gopanic   �  0runtime.morestack_noctxt    �  "".autotmp_0007 type.string "".~r0 _type.error "".err ?type.error "".key  type.string  ����� �  V�4	  J�Q Tgclocals·32bd5c6dc84e3e86dd35593b3922d3aa Tgclocals·0c41800cb8f0534ce5db566773ead421   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go� "".DecerementKey  �  �eH�%    H;avBH�� H�    H�$H�<$ t#H�$ H�\$(H�\$H�\$0H�\$�    H�� É%    ���    ���������
+      ,  "".MyCluster   ~  Ngopkg.in/redis%2ev3.(*commandable).Decr   �  0runtime.morestack_noctxt    @  "".key  type.string @4?@	? ` h0	 
+ >" Tgclocals·3f5c1f818fa7055d0400cecd34057162 Tgclocals·33cdeccccebe80329f1fdbee7f5874cb   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go�"".init  �  �eH�%    H;avzH���    �� t�    ��uH����    �    �    �    �    �    H�$�=     uH�    �    H���H�-    H�,$H�\$�    ���    �m����������������
+      ,  "".initdone·   D  "".initdone·   b  "runtime.throwinit   r "".initdone·   ~  0gopkg.in/redis%2ev3.init   �  6github.com/golang/glog.init   �  time.init   �  "".getRedis   � (runtime.writeBarrier   �  "".MyCluster   � "".initdone·   �  "".MyCluster   �  .runtime.writebarrierptr   �  0runtime.morestack_noctxt          A  � nMKLKL 
+ 0p Tgclocals·33cdeccccebe80329f1fdbee7f5874cb Tgclocals·33cdeccccebe80329f1fdbee7f5874cb   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go�4type..hash.[1]interface {} �  �eH�%    H;avpH��(H�L$81�H�D$   H�l$H9�}DH�D$ H�\$0H�� t>H��H��H�H�$H�L$8H�L$�    H�L$H�D$ H��H�l$H9�|�H�L$@H��(É��    �w����������
+      �  (runtime.nilinterhash   �  0runtime.morestack_noctxt   0P  
+"".autotmp_0011 type.int "".autotmp_0010 type.int "".~r2  type.uintptr "".h type.uintptr "".p  *type.*[1]interface {} PgOPO � � 
+ U; Tgclocals·0b86ef39f3fed835f14ba5f4d7c62fa2 Tgclocals·33cdeccccebe80329f1fdbee7f5874cb   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go�0type..eq.[1]interface {} �  �eH�%    H;a��   H��X1�H�D$(   H�l$(H9���   H�D$0H�\$hH�� ��   H��H��H�H�H�sH�\$`H�� tvH��H��H�H�H�SH9�uVH�D$8H�$H�T$@H�T$H�L$HH�L$H�t$PH�t$�    �\$ �� t H�D$0H��H�l$(H9��n����D$pH��X��D$p H��XÉ놉�c����    ���������
+      �  runtime.efaceeq   �  0runtime.morestack_noctxt   0�  "".autotmp_0015 ?"type.interface {} "".autotmp_0014 "type.interface {} "".autotmp_0013 _type.int "".autotmp_0012 Otype.int "".~r2  type.bool "".q *type.*[1]interface {} "".p  *type.*[1]interface {} ,����	��� � �  �S Tgclocals·3bb21ca8fe1d99a3e492463bd711418a Tgclocals·a8eabfc4a4514ed6b3b0c61e9680e440   �/Users/15692/Data/git/golang/src/bitbucket.org/myntra/myprecious_go/executor_go/redis/redis.go�<go.string.hdr."localhost:6379"                       4go.string."localhost:6379"   �4go.string."localhost:6379"    localhost:6379  �Tgclocals·33cdeccccebe80329f1fdbee7f5874cb           �Tgclocals·5184031d3a32a42d85027f073f873668              �Tgclocals·e686e33109a1bc2792301626c7b401c5 (  (   	       \       �Tgclocals·f7309186bf9eeb0f8ece2eb16f2dc110 (  (                �&go.string.hdr."val"                       go.string."val"   �go.string."val"   val  �Tgclocals·0c41800cb8f0534ce5db566773ead421                   �Tgclocals·32bd5c6dc84e3e86dd35593b3922d3aa                  �Tgclocals·33cdeccccebe80329f1fdbee7f5874cb           �Tgclocals·3f5c1f818fa7055d0400cecd34057162             �Tgclocals·33cdeccccebe80329f1fdbee7f5874cb           �Tgclocals·33cdeccccebe80329f1fdbee7f5874cb           �<"".MyCluster  @type.*gopkg.in/redis%2ev3.Client   �>"".initdone·  type.uint8   �"".getRedis·f              "".getRedis   �$"".IncrementKey·f              "".IncrementKey   �&"".SETKeyWithTTL·f               "".SETKeyWithTTL   �&"".DecerementKey·f               "".DecerementKey   �"".init·f              "".init   �"runtime.gcbits.03    �8go.string.hdr."interface {}"                       0go.string."interface {}"   �0go.string."interface {}"    interface {}  �"type.interface {} �  �              �W�                                                                 
+0�  runtime.algarray   @  "runtime.gcbits.03   P  8go.string.hdr."interface {}"   p  4go.weak.type.*interface {}   �� "type.interface {}   �"runtime.gcbits.01    �<go.string.hdr."[]interface {}"                       4go.string."[]interface {}"   �4go.string."[]interface {}"    []interface {}  �&type.[]interface {} �  �              p��/                                                 
+0�  runtime.algarray   @  "runtime.gcbits.01   P  <go.string.hdr."[]interface {}"   p  8go.weak.type.*[]interface {}   �  "type.interface {}   �Rgo.typelink.[]interface {}	[]interface {}              &type.[]interface {}   �Tgclocals·33cdeccccebe80329f1fdbee7f5874cb           �Tgclocals·0b86ef39f3fed835f14ba5f4d7c62fa2             �Tgclocals·a8eabfc4a4514ed6b3b0c61e9680e440              �Tgclocals·3bb21ca8fe1d99a3e492463bd711418a             �<type..hashfunc.[1]interface {}              4type..hash.[1]interface {}   �8type..eqfunc.[1]interface {}              0type..eq.[1]interface {}   �2type..alg.[1]interface {}                        <type..hashfunc.[1]interface {}     8type..eqfunc.[1]interface {}   �>go.string.hdr."[1]interface {}"                       6go.string."[1]interface {}"   �6go.string."[1]interface {}"     [1]interface {}  �(type.[1]interface {} �  �              P�[�                                                                0  2type..alg.[1]interface {}   @  "runtime.gcbits.03   P  >go.string.hdr."[1]interface {}"   p  :go.weak.type.*[1]interface {}   �  "type.interface {}   �  &type.[]interface {}   �Vgo.typelink.[1]interface {}	[1]interface {}              (type.[1]interface {}   �@go.string.hdr."*[1]interface {}"                       8go.string."*[1]interface {}"   �8go.string."*[1]interface {}" 0  "*[1]interface {}  �*type.*[1]interface {} �  �              ��5 6                                                
+0�  runtime.algarray   @  "runtime.gcbits.01   P  @go.string.hdr."*[1]interface {}"   p  <go.weak.type.**[1]interface {}   �  (type.[1]interface {}   �Bgo.string.hdr."gopkg.in/redis.v3"                       :go.string."gopkg.in/redis.v3"   �:go.string."gopkg.in/redis.v3" 0  $gopkg.in/redis.v3  �Dgo.importpath.gopkg.in/redis%2ev3.                       :go.string."gopkg.in/redis.v3"   �(go.string.hdr."time"                        go.string."time"   � go.string."time"   
+time  �&go.importpath.time.                        go.string."time"   �Lgo.string.hdr."github.com/golang/glog"                       Dgo.string."github.com/golang/glog"   �Dgo.string."github.com/golang/glog" 0  .github.com/golang/glog  �Jgo.importpath.github.com/golang/glog.                       Dgo.string."github.com/golang/glog"   �:type..hash.[1]interface {}·f              4type..hash.[1]interface {}   �6type..eq.[1]interface {}·f              0type..eq.[1]interface {}   ��go13ld 
